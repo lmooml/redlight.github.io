@@ -64,7 +64,7 @@ USAGE： 主域名+api路径+参数
 
 ### 2. 创建房间模板room（GET / POST）：
 
-创建虚拟直播间。如果创建虚拟直播间时，没有设置密码，则会返回2个随机密码，一个为普通用户密码attendeePW，一个为主持人密码moderatorPW。启动、加入会议时，需要用到密码作为参数。
+创建虚拟直播间。如果成功创建虚拟直播间，则会返回2个随机密码，一个为普通用户密码attendeePW，一个为主持人密码moderatorPW。启动、加入会议时，需要用到密码作为参数。
 
 GET方法为普通模式，建立一个标准房间模板。
 
@@ -76,7 +76,6 @@ POST方法为增强模式，参数以JSON方式传递，多了预传递课件URL
 | ----------- | ------ | ----------------------------------------------------------- |
 | meetingID   | string | 直播间id（required）                                        |
 | name        | string | 直播间名称（required）                                      |
-| attendeePW  | string | 直播间密码                                                  |
 | startDay    | string | 开始日，取值范围 ”周一“ ~ ”周日“                            |
 | startTime   | string | 开始时间，取值范围”00:00“-”23:59“                           |
 | endTime     | string | 结束时间，取值范围 ”00:00“-”23:59“                          |
@@ -97,10 +96,10 @@ POST方法为增强模式，参数以JSON方式传递，多了预传递课件URL
 
 ``` http://www.redlight.com/api/v1/room?meetingID=jisfenasdfk&name=history&session=alskdjf54alsdkfj42asslakdjfl123asjkd ```
 
-2. 直播间id：jisfenasdfk；直播间名称：history ；直播间密码：abcdef；用户加入需要主持人批准：
+2. 直播间id：jisfenasdfk；直播间名称：history ；用户加入需要主持人批准：
 
    ``` 
-   http://www.redlight.com/api/v1/room?meetingID=jisfenasdfk&name=history&attendeePW=abcdef&guestPolicy=true&session=alskdjf54alsdkfj42asslakdjfl123asjkd
+   http://www.redlight.com/api/v1/room?meetingID=jisfenasdfk&name=history&guestPolicy=true&session=alskdjf54alsdkfj42asslakdjfl123asjkd
 
 成功返回:
 
@@ -132,7 +131,6 @@ POST方法为增强模式，参数以JSON方式传递，多了预传递课件URL
 | ----------- | ------------ | ----------------------------------------------------------- |
 | meetingID   | string       | 直播间id（required）                                        |
 | name        | string       | 直播间名称（required）                                      |
-| attendeePW  | string       | 直播间密码                                                  |
 | startDay    | string       | 开始日，取值范围 ”周一“ ~ ”周日“                            |
 | startTime   | string       | 开始时间，取值范围”00:00“-”23:59“                           |
 | endTime     | string       | 结束时间，取值范围 ”00:00“-”23:59“                          |
@@ -151,7 +149,6 @@ JSON 数据：
 {
 	meetingID:"jisfenasdfk",
 	name:"history",
-	attendeePW:"sdfsfasf",
 	startDay:"周三",
 	startTime:"13:00",
 	endTime:"14:30",
@@ -180,7 +177,6 @@ JSON 数据：
 | ----------- | ------------ | ----------------------------------------------------------- |
 | meetingID   | string       | 直播间id（required）                                        |
 | name        | string       | 直播间名称（required）                                      |
-| attendeePW  | string       | 直播间密码                                                  |
 | startDay    | string       | 开始日，取值范围 ”周一“ ~ ”周日“                            |
 | startTime   | string       | 开始时间，取值范围”00:00“-”23:59“                           |
 | endTime     | string       | 结束时间，取值范围 ”00:00“-”23:59“                          |
@@ -199,7 +195,6 @@ JSON 数据：
 {
 	meetingID:"jisfenasdfk",
 	name:"history",
-	attendeePW:"sdfsfasf",
 	startDay:"周五",
 	startTime:"13:00",
 	endTime:"14:30",
@@ -240,7 +235,7 @@ JSON 数据：
 
 该方法会删除指定的虚拟直播间。
 
-**USEAGE（DELETE）：**主域名+api路径+参数
+**USEAGE（DELETE）：**主域名+api路径+参数+session字串
 
 | 参数名    | 类型   | 说明                 |
 | --------- | ------ | -------------------- |
@@ -249,7 +244,7 @@ JSON 数据：
 举例删除meetingID为12313的虚拟直播间:
 
 ``` 
-http://www.redlight.com/api/v1/room?meetingID=12313
+http://www.redlight.com/api/v1/room?meetingID=12313&session=alskdjf54alsdkfj42asslakdjfl123asjkd
 ```
 
 成功返回：
@@ -381,6 +376,16 @@ http://www.redlight.com/api/v1/roomList?session=alskdjf54alsdkfj42asslakdjfl123a
 }
 ```
 ## 三 、更新记录：
+
+### V1.02:
+
+1.删除创建房间模板API中attendeePW参数，密码管理交给redlinght。在创建房间模板时redlight会自动生成attendeePW和moderatorPW两个密码，并在创建成功后将2个密码返回。
+
+2.老师调用start方法进入直播间不需要带密码参数，redlinght会自动匹配上moderatorPW，以主持人身份登录。
+
+3.学生调用start方法时，需要密码参数，传入attendeePW是以普通身份加入直播间，传入moderatorPW则以主持人身份进入直播间。具体使用哪个密码，视具体的业务场景。
+
+4.修改部分手误
 
 ### V1.01:
 
